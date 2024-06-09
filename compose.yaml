@@ -1,0 +1,17 @@
+services:
+  vite:
+    build:
+      context: ./
+      dockerfile: ./deploy/local/Dockerfile
+    networks:
+      - app
+    volumes:
+      - .:/app
+    ports:
+      - 5173:5173
+    command: sh -c "npm i && npm run dev -- --host"
+
+networks:
+  app:
+    external: true
+    name: ${APP_NAME}

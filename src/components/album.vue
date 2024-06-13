@@ -42,7 +42,7 @@ export default {
       this.playerStore.playlistAddRelease(albumId);
     },
     getArtUrl(art) {
-      return `${import.meta.env.VITE_BACKEND_URL}${art}`;
+      return `${art}`;
     },
   },
 };

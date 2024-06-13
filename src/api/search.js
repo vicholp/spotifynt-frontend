@@ -1,11 +1,10 @@
 import api from './index';
 
 export default {
-  show(releaseId, params) {
+  index(search){
     return api({
       method: 'get',
-      url: `api/releases/${releaseId}`,
-      params,
+      url: `api/search?q=${search}`,
     });
   },
 };

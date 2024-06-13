@@ -61,6 +61,8 @@ jobs:
           push: true
           no-cache: true
           tags: registry.vicholp.duckdns.org/${{ github.repository }}-${{ steps.dockerfile-data.outputs.image-name }}:latest
+          build-args: |
+            "VITE_BACKEND_URL=${{ vars.VITE_BACKEND_URL }}"
 
   # deploy:
   #   # Deploy the Docker image to the remote server

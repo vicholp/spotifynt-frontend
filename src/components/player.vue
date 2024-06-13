@@ -101,7 +101,7 @@ export default {
       return;
     }
     document.title = `${this.playerStore.currentTrack.title}`;
-    this.$refs.player.src = `${this.serverStore.activeServer.path}/item/${this.playerStore.currentTrack.serverTrack.beetsId}/file`; // eslint-disable-line
+    this.$refs.player.src = `${this.serverStore.getActiveServerPath()}/item/${this.playerStore.currentTrack.serverTrack.beetsId}/file`; // eslint-disable-line
   },
   methods: {
     clearTrack() {
@@ -111,13 +111,13 @@ export default {
     loadNextTrack() {
       const nextTrack = this.playerStore.getNextTrack;
 
-      this.$refs.playerPreloader.src = `${this.serverStore.activeServer.path}/item/${nextTrack.serverTrack.beetsId}/file`; // eslint-disable-line
+      this.$refs.playerPreloader.src = `${this.serverStore.getActiveServerPath()}/item/${nextTrack.serverTrack.beetsId}/file`; // eslint-disable-line
     },
     loadMetadata(event) {
       this.totalTime = event.target.duration;
     },
     loadTrack(track) {
-      this.$refs.player.src = `${this.serverStore.activeServer.path}/item/${track.serverTrack.beetsId}/file`;
+      this.$refs.player.src = `${this.serverStore.getActiveServerPath()}/item/${track.serverTrack.beetsId}/file`;
       this.$refs.playerPreloader.src = '';
 
       document.title = `${track.title}`;

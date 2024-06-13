@@ -181,7 +181,7 @@ export default {
       this.playerStore.playlistSetIndex(index, false);
     },
     getArtUrl(art) {
-      return `${import.meta.env.VITE_BACKEND_URL}${art}`;
+      return `${art}`;
     },
   },
 };

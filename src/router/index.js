@@ -16,7 +16,7 @@ import Playlists from '@/views/playlists.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    {path: '/login',name: 'login', component: () => import('@/views/auth/Login.vue'), },
+    {path: '/login', name: 'login', component: () => import('@/views/auth/Login.vue') },
     { path: '/', component: Index, props: true },
 
     { path: '/servers', component: ServersIndex, props: true },
@@ -29,7 +29,7 @@ const router = createRouter({
 
     { path: '/playlist/:id', component: Playlist, props: true },
     { path: '/playlists', component: Playlists, props: true },
-  ]
+  ],
 });
 
 export default router;

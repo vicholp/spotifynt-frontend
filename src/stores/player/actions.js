@@ -22,7 +22,7 @@ export default {
   },
 
   async playlistAddRelease(releaseId) {
-    const release = (await ReleaseApi.show(releaseId)).data.data;
+    const release = (await ReleaseApi.show(releaseId, {withTracks: true})).data.data;
     const serverStore = ServerStore();
     const serverId = serverStore.activeServer.id;
 
@@ -65,26 +65,20 @@ export default {
 
   playlistShuffle() {
     const tracks = this.playlist.tracks;
-    let temp = {};
-    let j = 0;
 
-    for (let i = tracks.length - 1; i > 0; i--) {
-      if (i === this.playlist.index) {
-        continue;
-      }
+    let currentTrack = tracks[this.playlist.index];
+    let remainingTracks = tracks.filter((_, index) => index !== this.playlist.index);
 
-      j = Math.floor(Math.random() * (i + 1));
-
-      if (j === this.playlist.index) {
-        continue;
-      }
-
-      temp = tracks[i];
-      tracks[i] = tracks[j];
-      tracks[j] = temp;
+    for (let i = remainingTracks.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [remainingTracks[i], remainingTracks[j]] = [remainingTracks[j], remainingTracks[i]];
     }
 
-    this.playlist.tracks = tracks;
+    this.playlist.tracks = [
+        ...remainingTracks.slice(0, this.playlist.index),
+        currentTrack,
+        ...remainingTracks.slice(this.playlist.index),
+    ];
   },
   async playlistClear() {
     this.playlist.tracks = [];

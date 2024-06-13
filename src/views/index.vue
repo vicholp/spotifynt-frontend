@@ -33,8 +33,9 @@ import IndexRecommendations from '@/components/index/recommendations';
 import Layout from '@/layouts/main.vue';
 import QueryResults from '@/components/index/queryResults.vue';
 import Server from '@/components/server.vue';
-import ServerApi from '@/api/server';
+// import ServerApi from '@/api/server';
 import ServerStore from '@/stores/server';
+import searchApi from '@/api/search';
 
 const WAITING_TIME_QUERY = 100; // [ms]
 
@@ -75,7 +76,7 @@ export default {
     async sendQuery() {
       if (this.query.length === 0) {
         this.queryResults = [];
-        history.pushState(null, null, 'player#/');
+        history.pushState(null, null, '/');
 
         return;
       }
@@ -83,15 +84,14 @@ export default {
       setTimeout(async () => {
         const actualQuery = this.query;
         if (actualQuery !== initialQuery) return;
-        const results = (await ServerApi.searchContent(this.activeServer.id, this.query)).data;
+        const results = (await searchApi.index(this.query)).data;
         const finalQuery = this.query;
         if (finalQuery !== initialQuery) return;
-        history.pushState(null, null, `#/?q=${this.query}`);
+        history.pushState(null, null, `/?q=${this.query}`);
 
         const queryResults = {
           'albums': results.albums,
-          'artists': results.artists,
-          'tracks': results.tracks.data,
+          'tracks': results.tracks,
         };
         this.queryResults = queryResults;
       }, WAITING_TIME_QUERY);

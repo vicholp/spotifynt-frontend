@@ -42,7 +42,7 @@ export default {
   },
   methods: {
     refreshServer() {
-      fetch(`${this.serverStore.activeServer.path}`)
+      fetch(`${this.serverStore.getActiveServerPath()}`)
         .then(res => {
           if (res.ok) {
             this.serverAvailable = 1;

@@ -1,5 +1,8 @@
 FROM node:20.11-alpine as build
 
+ARG VITE_BACKEND_URL
+ENV VITE_BACKEND_URL ${VITE_BACKEND_URL}
+
 WORKDIR /app
 
 COPY package.json .
@@ -9,7 +12,7 @@ RUN npm i
 
 COPY . .
 
-RUN npm run build
+RUN npm run prod
 
 FROM nginx:1.25
 

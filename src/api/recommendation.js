@@ -1,10 +1,10 @@
 import api from './index';
 
 export default {
-  random(serverId) {
+  random() {
     return api({
       method: 'get',
-      url: `api/servers/${serverId}/recommendations/random`,
+      url: `api/recommendations/index`,
     });
   },
 };

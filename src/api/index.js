@@ -19,11 +19,11 @@ api.interceptors.response.use(
   },
   error => {
     if (error.response.status === 401) {
-      router.push({ name: 'login' });
+      router.push({ name: 'auth.login' });
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 api.interceptors.request.use(config => {

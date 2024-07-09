@@ -1,7 +1,7 @@
 export default {
   getActiveServerPath() {
-    if (this.activeServer.path == 'http://beets:9003') {
-      return `http://localhost:9003`;
+    if (this.activeServer.path == 'http://beets:9090') {
+      return `http://localhost:9090`;
     }
 
     return this.activeServer.path;

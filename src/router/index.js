@@ -13,10 +13,12 @@ import Track from '@/views/track.vue';
 import Playlist from '@/views/playlist.vue';
 import Playlists from '@/views/playlists.vue';
 
+import authRouter from './auth';
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    {path: '/login', name: 'login', component: () => import('@/views/auth/Login.vue') },
+    ...authRouter,
     { path: '/', component: Index, props: true },
 
     { path: '/servers', component: ServersIndex, props: true },

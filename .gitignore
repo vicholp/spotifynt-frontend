@@ -29,7 +29,5 @@ coverage
 
 *.tsbuildinfo
 
-.vscode
-
 .env
 .secrets

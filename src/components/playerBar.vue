@@ -27,7 +27,7 @@
             <div class="">
               <div
                 v-if="loaded"
-                :style="`background-image: url(&quot;${getArtUrl(actual.release.art[75])}&quot;);`"
+                :style="`background-image: url(&quot;${getArtUrl(actual.release.art['75x75'])}&quot;);`"
                 class="h-14 bg-cover rounded shadow aspect-square"
               />
               <div

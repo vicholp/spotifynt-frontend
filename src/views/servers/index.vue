@@ -40,8 +40,7 @@
             class="p-2 items-center flex gap-3"
           >
             <span
-              :class="`animate-pulse h-1 w-1 inline-flex rounded-full   mx-2 opacity-75
-                ${ serverAvailable == 1 ? 'bg-green-400': 'bg-red-400' }`"
+              :class="`animate-pulse h-1 w-1 inline-flex rounded-full   mx-2 opacity-75 bg-gray-500`"
             />
             <div class="">
               {{ server.name }}
@@ -82,7 +81,7 @@ import UserServerApi from '../../api/userServer';
 import ServerStore from '../../stores/server';
 import useUserStore from '../../stores/user';
 import { mapWritableState } from 'pinia';
-import { mapStores } from 'pinia'
+import { mapStores } from 'pinia';
 
 
 export default {
@@ -107,7 +106,7 @@ export default {
   },
   computed: {
     ...mapWritableState(ServerStore, ['activeServer']),
-    ...mapStores(useUserStore)
+    ...mapStores(useUserStore),
   },
   async mounted() {
     this.getServers();

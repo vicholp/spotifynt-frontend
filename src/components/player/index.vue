@@ -111,16 +111,6 @@
               />
               Shuffle
             </button>
-            <button
-              type="button"
-              class="px-3 flex items-center gap-3 opacity-50"
-            >
-              <span
-                class="iconify"
-                data-icon="mdi:content-save"
-              />
-              Save
-            </button>
           </div>
           <div class="flex flex-col divide-white divide-opacity-30">
             <div

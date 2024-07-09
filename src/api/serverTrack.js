@@ -5,6 +5,11 @@ export default {
     return api({
       method: 'get',
       url: `api/servers/${serverId}/tracks/${trackId}`,
+      params: {
+        withArtSizefull: true,
+        withArtSize250x250: true,
+        withArtSize75x75: true,
+      },
     });
   },
 };

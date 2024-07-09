@@ -5,7 +5,6 @@ import { fileURLToPath, URL } from 'node:url';
 import { sentryVitePlugin } from "@sentry/vite-plugin";
 import VueDevTools from 'vite-plugin-vue-devtools';
 
-
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
 

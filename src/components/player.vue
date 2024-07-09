@@ -170,8 +170,8 @@ export default {
           artist: 'spotifynt',
           album: track.release.title,
           artwork: [
-            { src: track.release.art[250], sizes: '250x250', type: 'image/webp' },
-            { src: track.release.art[75], sizes: '75x75', type: 'image/webp' },
+            { src: track.release.art['250x250'], sizes: '250x250', type: 'image/webp' },
+            { src: track.release.art['75x75'], sizes: '75x75', type: 'image/webp' },
           ],
         });
 

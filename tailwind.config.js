@@ -8,11 +8,23 @@ export default {
     "./src/**/*.{vue,js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary:{
+          100: '#FCE7F3',
+          200: '#F8C2E2',
+          500: '#E2279E',
+          800: '#9F1853',
+        },
+        secondary: {
+
+        },
+      },
+    },
   },
   plugins: [
     formsPlugin,
-    typographyPlugin
+    typographyPlugin,
   ],
 };
 

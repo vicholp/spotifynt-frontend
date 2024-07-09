@@ -38,7 +38,7 @@ export default {
 
     this.serverRefreshTimeout = setInterval(() => {
       this.refreshServer();
-    }, 10000);
+    }, 30000);
   },
   methods: {
     refreshServer() {

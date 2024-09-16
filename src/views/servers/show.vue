@@ -14,7 +14,9 @@
 import Layout from '../../layouts/main.vue';
 import ServerApi from '../../api/server';
 import ServerStore from '../../stores/server';
+import useUserStore from '../../stores/user';
 import { mapWritableState } from 'pinia';
+import { mapStores } from 'pinia';
 
 export default {
   components: {
@@ -37,6 +39,7 @@ export default {
   },
   computed: {
     ...mapWritableState(ServerStore, ['activeServer']),
+    ...mapStores(useUserStore),
   },
   async mounted() {
     this.getServer();
@@ -44,6 +47,11 @@ export default {
   methods: {
     async getServer() {
       this.server = (await ServerApi.show(this.$route.params.id)).data.data;
+
+      ServerApi.tracks.index(this.server.id);
+      ServerApi.artists.index(this.server.id);
+      ServerApi.releases.index(this.server.id);
+      ServerApi.releaseGroups.index(this.server.id);
     },
     setActiveServer(server) {
       this.activeServer = server;

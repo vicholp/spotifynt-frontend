@@ -15,5 +15,5 @@ export default {
   },
   me() {
     return api.get('/api/users/me');
-  }
+  },
 };

@@ -43,11 +43,14 @@ export default defineConfig(({ mode }) => {
         },
       }),
       VueDevTools(),
-      sentryVitePlugin({
-        org: env.VITE_SENTRY_ORG,
-        project: env.VITE_SENTRY_PROJECT,
-        authToken: env.VITE_SENTRY_AUTH_TOKEN,
-      }),
+      () => (env.VITE_SENTRY_AUTH_TOKEN ?
+        sentryVitePlugin({
+          org: env.VITE_SENTRY_ORG,
+          project: env.VITE_SENTRY_PROJECT,
+          authToken: env.VITE_SENTRY_AUTH_TOKEN,
+        })
+        : undefined
+      ),
     ],
   };
 });

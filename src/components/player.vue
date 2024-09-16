@@ -51,6 +51,8 @@ import ServerStore from '@/stores/server';
 import PlayerOverlay from '@/components/player/index';
 
 import StatsApi from '@/api/stats';
+import { mapStores } from 'pinia';
+import useUserStore from '@/stores/user';
 
 const TIME_AFTER_LISTENED = 240; // [s]
 const PROGRESS_AFTER_LISTENED = 0.5; // [%]
@@ -66,6 +68,7 @@ export default {
       type: Object,
     },
   },
+
   setup() {
     const playerStore = PlayerStore();
     const serverStore = ServerStore();
@@ -84,6 +87,9 @@ export default {
       loading: false,
       playerOverlay: false,
     };
+  },
+  computed: {
+    ...mapStores(useUserStore),
   },
   watch: {
     'playerStore.currentTrack'(track) {
@@ -151,13 +157,11 @@ export default {
       ) {
         this.listened = true;
 
-        let data = {
-          trackId: this.playerStore.currentTrack.id,
-          userId: this.authUser.id,
-          serverId: this.serverStore.activeServer.id,
-          releaseId: this.playerStore.currentTrack.release.id,
-        };
-        StatsApi.playedTrack(data);
+        StatsApi.playedTrack(
+          this.userStore.user.id,
+          this.serverStore.activeServer.id,
+          this.playerStore.currentTrack.id,
+        );
       }
       if (this.playerStore.status.playing === false && event.target.currentTime > 1) {
         // StatsApi.nowPlaying(this.actual.id);

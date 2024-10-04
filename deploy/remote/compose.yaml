@@ -1,7 +1,26 @@
+name: "${APP_NAME}-${APP_ACTUAL_ENV}"
+
 services:
   frontend:
-    build: 
-      dockerfile: deploy/prod/Dockerfile
-      context: ../../.
-    ports: 
+    restart: unless-stopped
+    image: ${DOCKER_REGISTRY}/${GITHUB_REPO}-vue:${APP_ACTUAL_ENV}-latest
+    networks:
+      - traefik
+    ports:
       - 80
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+
+      - "traefik.http.routers.insecure-${APP_NAME}-${APP_ACTUAL_ENV}.entrypoints=http"
+      - "traefik.http.routers.insecure-${APP_NAME}-${APP_ACTUAL_ENV}.rule=Host(`${TRAEFIK_HOST}`)"
+      - "traefik.http.routers.insecure-${APP_NAME}-${APP_ACTUAL_ENV}.middlewares=redirectToHttps@file"
+
+      - "traefik.http.routers.${APP_NAME}-${APP_ACTUAL_ENV}.rule=Host(`${TRAEFIK_HOST}`)"
+      - "traefik.http.routers.${APP_NAME}-${APP_ACTUAL_ENV}.tls=true"
+      - "traefik.http.routers.${APP_NAME}-${APP_ACTUAL_ENV}.tls.certresolver=${TRAEFIK_CERT_RESOLVER}"
+
+networks:
+  traefik:
+    name: traefik
+    external: true

@@ -63,6 +63,8 @@ jobs:
           push: true
           no-cache: true
           tags: ${{ secrets.DOCKER_REGISTRY }}/${{ github.repository }}-${{ steps.dockerfile-data.outputs.image-name }}:${{ github.ref_name }}-latest
+          build-args: |
+            "VITE_BACKEND_URL=${{ vars.VITE_BACKEND_URL }}"
 
   deploy:
     # Deploy the Docker image to the remote server
@@ -79,7 +81,7 @@ jobs:
       - name: Copy remote/compose.yaml to remote server
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.SSH_HOST }}
+          host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.REMOTE_KEY }}
           port: ${{ secrets.REMOTE_PORT }}

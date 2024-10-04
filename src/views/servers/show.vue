@@ -6,6 +6,13 @@
           {{ server.name }}
         </h2>
       </div>
+      <div class="bg-white dark:bg-opacity-5 p-2 rounded ">
+        <div>
+          <p>Artists: {{ server.artistsCount }}</p>
+          <p>Releases: {{ server.releasesCount }}</p>
+          <p>Tracks: {{ server.tracksCount }}</p>
+        </div>
+      </div>
     </div>
   </layout>
 </template>

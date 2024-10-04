@@ -5,19 +5,7 @@
   >
     <span class="col-span-5">{{ track.title }}</span>
     <span class="col-span-5">{{ track.release.title }}</span>
-    <div class="col-span-2 flex ml-auto">
-      <div class="flex rounded">
-        <button
-          type="button"
-          class=""
-        >
-          <span
-            class="iconify text-xl text-gray-500"
-            data-icon="ic:round-more-vert"
-          />
-        </button>
-      </div>
-    </div>
+    <div class="col-span-2 flex ml-auto" />
   </div>
 </template>
 <script>

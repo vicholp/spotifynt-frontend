@@ -2,17 +2,19 @@
   <layout>
     <div class="container mx-auto flex flex-col gap-5 px-2">
       <Server />
-      <div class="flex bg-white dark:bg-opacity-5 px-3 py-1 items-center rounded gap-3 shadow dark:shadow-none">
+      <div class="flex bg-white dark:bg-opacity-5 pl-3 items-center rounded gap-3 shadow dark:shadow-none">
         <span
           class="iconify text-lg"
           data-icon="mdi:magnify"
         />
         <input
+          ref="search"
           v-model="query"
           type="text"
-          class="bg-white bg-opacity-0 w-full border-0 h-10 p-0"
+          class="bg-white bg-opacity-0 w-full border-0 h-12 p-0 px-3 dark:focus:bg-opacity-10 dark:focus:ring-0 rounded-r"
           placeholder="search"
           @input="sendQuery"
+          @keyup.enter.prevent="$refs.search.blur()"
         >
       </div>
       <KeepAlive>
@@ -71,7 +73,25 @@ export default {
       this.sendQuery();
     }
   },
+  created() {
+    window.addEventListener('keydown', this.keyDownHandler);
+  },
+  unmounted() {
+    window.removeEventListener('keydown', this.keyDownHandler);
+  },
   methods: {
+    keyDownHandler(e) {
+      if (e.key == '/') {
+        e.preventDefault();
+
+        this.$refs.search.focus();
+      }
+
+      if (e.key == 'Escape') {
+        this.query = '';
+        this.queryResults = [];
+      }
+    },
     // Espera WAITING_TIME_QUERY para hacer la query, y comprueba que la query no ha cambiado para hacerla.
     async sendQuery() {
       if (this.query.length === 0) {

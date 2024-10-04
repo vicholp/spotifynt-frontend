@@ -23,7 +23,7 @@
     "dayjs": "^1.11.11",
     "eslint": "^8.57.0",
     "humps": "^2.0.1",
-    "npm": "^9.5.0",
+    "npm": "^10.8.1",
     "pinia": "^2.0.14",
     "pinia-plugin-persistedstate": "^3.2.1",
     "postcss": "^8.4.16",

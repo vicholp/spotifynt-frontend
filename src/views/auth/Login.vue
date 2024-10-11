@@ -12,12 +12,14 @@
           type="email"
           placeholder="Email"
           class="p-2 w-full max-w-xs border-2 border-gray-200 dark:bg-gray-800 rounded-md focus:outline-none  focus:border-primary-500"
+          @keyup.enter="login"
         >
         <input
           v-model="password"
           type="password"
           placeholder="Password"
           class="p-2 w-full max-w-xs border-2 border-gray-200 dark:bg-gray-800 rounded-md focus:outline-none focus:border-primary-500"
+          @keyup.enter="login"
         >
       </div>
       <button

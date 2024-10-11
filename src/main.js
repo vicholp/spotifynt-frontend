@@ -5,13 +5,13 @@ import { createApp } from 'vue';
 // eslint-disable-next-line no-unused-vars
 import Iconify from '@iconify/iconify';
 
-import App from './App.vue';
 import router from './router';
 
 import i18n from './locales';
 import pinia from './stores';
 import dayjs from './helpers/dayjs';
 import * as Sentry from '@sentry/vue';
+import App from './App.vue';
 
 const app = createApp(App);
 

@@ -79,7 +79,7 @@ jobs:
           path: source
 
       - name: Copy remote/compose.yaml to remote server
-        uses: appleboy/scp-action@v0.1.7
+        uses: appleboy/scp-action@v1
         with:
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USER }}
@@ -88,6 +88,7 @@ jobs:
           strip_components: 3
           source: "source/deploy/remote/compose.yaml"
           target: "${{ secrets.REMOTE_PATH }}/${{ github.ref_name }}/${{ github.event.repository.name }}"
+          timeout: 60s
 
       - name: Pull and start the Docker container
         uses: appleboy/ssh-action@v1.0.3

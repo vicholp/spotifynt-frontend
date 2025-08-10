@@ -7,8 +7,10 @@ export default {
       url: `api/releases/${id}`,
       params: {
         withArtSizefull: true,
+        withArtSize500x500: true,
         withArtSize250x250: true,
         withArtSize75x75: true,
+        withTracks: true,
         ...params,
       },
     });

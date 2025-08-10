@@ -2,6 +2,14 @@
   <div
     class="col-span-12 grid grid-cols-12 gap-3"
   >
+    <RouterLink
+      :to="{ name: 'discover.alpha.index' }"
+      class="col-span-12 bg-white bg-opacity-5 text-white text-opacity-90 rounded shadow flex flex-col p-3 h-min-[5px] cursor-pointer hover:bg-opacity-10 transition duration-200"
+    >
+      <div>
+        Descubrir
+      </div>
+    </RouterLink>
     <div
       class="col-span-12 grid grid-cols-12 gap-3 h-min-[5px]"
     >

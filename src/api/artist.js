@@ -1,15 +1,26 @@
 import api from './index';
 
 export default {
-  show(serverId, trackId) {
+  index() {
     return api({
       method: 'get',
-      url: `api/servers/${serverId}/tracks/${trackId}`,
+      url: 'api/artists',
+      params: {
+        withReleaseCount: true,
+      },
+    });
+  },
+  show(id, params = {}) {
+    return api({
+      method: 'get',
+      url: `api/artists/${id}`,
       params: {
         withArtSizefull: true,
         withArtSize500x500: true,
         withArtSize250x250: true,
         withArtSize75x75: true,
+        withReleases: true,
+        ...params,
       },
     });
   },

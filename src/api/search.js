@@ -1,11 +1,12 @@
 import api from './index';
 
 export default {
-  index(search){
+  index(search) {
     return api({
       method: 'get',
       url: `api/search?q=${search}`,
       params: {
+        withArtSize500x500: true,
         withArtSize250x250: true,
       },
     });

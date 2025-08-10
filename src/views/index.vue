@@ -1,7 +1,6 @@
 <template>
   <layout>
     <div class="container mx-auto flex flex-col gap-5 px-2">
-      <Server />
       <div class="flex bg-white dark:bg-opacity-5 pl-3 items-center rounded gap-3 shadow dark:shadow-none">
         <span
           class="iconify text-lg"
@@ -29,14 +28,9 @@
 </template>
 <script>
 
-import { mapState } from 'pinia';
-
 import IndexRecommendations from '@/components/index/recommendations';
 import Layout from '@/layouts/main.vue';
 import QueryResults from '@/components/index/queryResults.vue';
-import Server from '@/components/server.vue';
-// import ServerApi from '@/api/server';
-import ServerStore from '@/stores/server';
 import searchApi from '@/api/search';
 
 const WAITING_TIME_QUERY = 100; // [ms]
@@ -46,20 +40,12 @@ export default {
     IndexRecommendations,
     Layout,
     QueryResults,
-    Server,
-  },
-  setup() {
-    const example = ServerStore();
-    return { example };
   },
   data() {
     return {
       query: this.$route.query.q ?? '',
       queryResults: [],
     };
-  },
-  computed: {
-    ...mapState(ServerStore, ['activeServer']),
   },
   async mounted() {
     if (import.meta.env.APP_ENV === 'production') {
@@ -96,7 +82,7 @@ export default {
     async sendQuery() {
       if (this.query.length === 0) {
         this.queryResults = [];
-        history.pushState(null, null, '/');
+
 
         return;
       }
@@ -107,11 +93,10 @@ export default {
         const results = (await searchApi.index(this.query)).data;
         const finalQuery = this.query;
         if (finalQuery !== initialQuery) return;
-        history.pushState(null, null, `/?q=${this.query}`);
+
 
         const queryResults = {
-          'albums': results.albums,
-          'tracks': results.tracks,
+          'albums': results?.albums,
         };
         this.queryResults = queryResults;
       }, WAITING_TIME_QUERY);

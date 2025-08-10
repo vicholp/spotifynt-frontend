@@ -18,7 +18,14 @@
               :to="{ name: 'album.show', params: { albumId: album.id } }"
               @click.stop
             >
-              <span class="text-center font-bold whitespace-nowrap overflow-hidden overflow-ellipsis">{{ album.title }}</span>
+              <span class="justify-center items-center gap-1 font-bold whitespace-nowrap overflow-hidden overflow-ellipsis flex">
+                <span
+                  v-if="album.source === 'alpha'"
+                  class="iconify "
+                  data-icon="mdi:youtube"
+                />
+                {{ trimmedTitle(album.title) }}
+              </span>
             </RouterLink>
           </div>
         </div>
@@ -26,7 +33,7 @@
     </div>
     <div
       v-else
-      class="rounded h-full bg-black bg-opacity-90
+      class="rounded h-full bg-black bg-opacity-60
       transition duration-300 col-span-6
       md:col-span-4 lg:col-span-3 xl:col-span-2 shadow dark:shadow-none"
       @click="addAlbum(album.id)"
@@ -35,8 +42,8 @@
         class="opacity-90 aspect-square bg-cover relative rounded hover:opacity-100 transition duration-300
       flex flex-col justify-between p-5 text-white text-opacity-80"
       >
-        <span class=" text-sm text-center font-bold ">added</span>
-        <span class=" text-sm text-center font-bold ">{{ album.title }}</span>
+        <span class=" text-sm text-center font-bold">added</span>
+        <span class=" text-sm text-center font-bold">{{ album.title }}</span>
       </div>
     </div>
   </Transition>
@@ -73,6 +80,12 @@ export default {
     },
     getArtUrl(art) {
       return `${art}`;
+    },
+    trimmedTitle(title) {
+      if (title.length > 25) {
+        return `${title.substring(0, 22)}...`;
+      }
+      return title;
     },
   },
 };

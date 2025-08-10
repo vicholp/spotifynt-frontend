@@ -1,7 +1,6 @@
 import ReleaseApi from '../../api/release';
-import ServerTrackApi from '../../api/serverTrack';
+import TrackApi from '../../api/track';
 
-import ServerStore from '../server';
 import MessagesStore from '../messages';
 
 export default {
@@ -15,29 +14,43 @@ export default {
   },
 
   async playlistAddTrackById(trackId) {
-    const serverStore = ServerStore();
-    const serverId = serverStore.activeServer.id;
-    const track = (await ServerTrackApi.show(serverId, trackId)).data.data;
+    const track = (await TrackApi.show(trackId, {
+      withArtSize500x500: true,
+      withFiles: true, withRelease: true, withArtSize250x250: true,
+      withArtSize75x75: true,
+    })).data.data;
     this.playlistAddTrack(track);
   },
 
   async playlistAddRelease(releaseId) {
-    const release = (await ReleaseApi.show(releaseId, {withTracks: true})).data.data;
-    const serverStore = ServerStore();
-    const serverId = serverStore.activeServer.id;
+    const release = (await ReleaseApi.show(releaseId, {
+      withTracks: true, withArtSize250x250: true,
+      withArtSize500x500: true,
+
+      withArtSize75x75: true,
+    })).data.data;
 
     // first add the first track to the playlist,
     // for performance reasons
     let firstTrackId = release.tracks[0].id;
     this.playlistAddTrack(
-      (await ServerTrackApi.show(serverId, firstTrackId)).data.data,
+      (await TrackApi.show(firstTrackId, {
+        withFiles: true, withRelease: true, withArtSize250x250: true,
+        withArtSize500x500: true,
+        withArtSize75x75: true,
+      })).data.data,
     );
 
     // then add the rest of the tracks in a async loop
     for (let i = 1; i < release.tracks.length; i++) {
       let track = release.tracks[i];
       this.playlistAddTrack(
-        (await ServerTrackApi.show(serverId, track.id)).data.data,
+        (await TrackApi.show(track.id, {
+          withFiles: true, withRelease: true, withArtSize250x250: true,
+          withArtSize500x500: true,
+
+          withArtSize75x75: true,
+        })).data.data,
       );
     }
 
@@ -70,14 +83,14 @@ export default {
     let remainingTracks = tracks.filter((_, index) => index !== this.playlist.index);
 
     for (let i = remainingTracks.length - 1; i > 0; i--) {
-        let j = Math.floor(Math.random() * (i + 1));
-        [remainingTracks[i], remainingTracks[j]] = [remainingTracks[j], remainingTracks[i]];
+      let j = Math.floor(Math.random() * (i + 1));
+      [remainingTracks[i], remainingTracks[j]] = [remainingTracks[j], remainingTracks[i]];
     }
 
     this.playlist.tracks = [
-        ...remainingTracks.slice(0, this.playlist.index),
-        currentTrack,
-        ...remainingTracks.slice(this.playlist.index),
+      ...remainingTracks.slice(0, this.playlist.index),
+      currentTrack,
+      ...remainingTracks.slice(this.playlist.index),
     ];
   },
   async playlistClear() {

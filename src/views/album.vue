@@ -11,10 +11,26 @@
           {{ album?.title }}
         </h2>
         <h3 class="text-sm text-center">
-          {{ album?.artist.name }}
+          {{ album?.artist?.name }}
         </h3>
       </div>
 
+      <div class="flex flex-col gap-3 bg-white dark:bg-white dark:bg-opacity-5 pb-3 p-5 rounded">
+        <div class="flex justify-between items-center">
+          <h3 class="font-bold">
+            Discover
+          </h3>
+        </div>
+        <div class="flex flex-col  divide-y divide-white divide-opacity-5">
+          <RouterLink
+            v-if="album?.alphaId"
+            :to="{ name: 'discover.alpha.album', params: { id: album.alphaId } }"
+            class="flex py-3 items-center pr-3"
+          >
+            Alpha
+          </RouterLink>
+        </div>
+      </div>
       <div class="flex flex-col gap-3 bg-white dark:bg-white dark:bg-opacity-5 pb-3 p-5 rounded">
         <div class="flex justify-between items-center">
           <h3 class=" font-bold">
@@ -47,11 +63,13 @@ import Layout from '@/layouts/main.vue';
 import albumApi from '@/api/album';
 import { mapStores } from 'pinia';
 import usePlayerStore from '@/stores/player';
+import { RouterLink } from 'vue-router';
 
 export default {
 
   components: {
     Layout,
+    RouterLink,
   },
   data() {
     return {
@@ -66,6 +84,7 @@ export default {
   async mounted() {
     const response = await albumApi.show(this.albumId, {
       withTracks: true,
+      withArtist: true,
     });
 
     this.album = response.data.data;

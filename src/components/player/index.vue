@@ -19,7 +19,7 @@
           <div class="col-span-3 xl:col-span-12">
             <div
               v-if="playerStore.currentTrack.title != null"
-              :style="`background-image: url(&quot;${getArtUrl(playerStore.currentTrack.release.art['full'])}&quot;);`"
+              :style="`background-image: url(&quot;${getArtUrl(playerStore.currentTrack.release.art['500x500'])}&quot;);`"
               class="bg-cover rounded aspect-square dark:opacity-90"
             />
             <div

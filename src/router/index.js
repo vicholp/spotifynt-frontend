@@ -15,6 +15,8 @@ import Playlists from '@/views/playlists.vue';
 
 import authRouter from './auth';
 
+import discoverAlphaRoutes from './discover/alpha.js';
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -31,6 +33,13 @@ const router = createRouter({
 
     { path: '/playlist/:id', component: Playlist, props: true },
     { path: '/playlists', component: Playlists, props: true },
+
+    { path: '/upload', component: () => import('@/views/upload.vue'), props: true },
+
+    { path: '/admin/artists', component: () => import('@/views/admin/artists.vue'), props: true },
+    { path: '/admin/artists/:id', component: () => import('@/views/admin/artist.vue'), props: true },
+    { path: '/admin/releases/:releaseId', component: () => import('@/views/admin/release.vue'), props: true, name: 'admin.release.show' },
+    ...discoverAlphaRoutes,
   ],
 });
 

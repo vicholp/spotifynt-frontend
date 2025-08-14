@@ -97,6 +97,7 @@ export default {
 
         const queryResults = {
           'albums': results?.albums,
+          'tracks': results?.tracks,
         };
         this.queryResults = queryResults;
       }, WAITING_TIME_QUERY);

@@ -8,6 +8,7 @@ export default {
       params: {
         withArtSize500x500: true,
         withArtSize250x250: true,
+        withRelease: true,
       },
     });
   },

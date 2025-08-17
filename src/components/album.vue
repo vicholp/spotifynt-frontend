@@ -20,7 +20,12 @@
             >
               <span class="justify-center items-center gap-1 font-bold whitespace-nowrap overflow-hidden overflow-ellipsis flex">
                 <span
-                  v-if="album.source === 'alpha'"
+                  v-if="album.extensions.includes('.flac')"
+                  class="iconify"
+                  data-icon="mdi:high-definition-box"
+                />
+                <span
+                  v-else-if="album.source === 'alpha'"
                   class="iconify "
                   data-icon="mdi:youtube"
                 />

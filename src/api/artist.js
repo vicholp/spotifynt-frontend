@@ -20,6 +20,8 @@ export default {
         withArtSize250x250: true,
         withArtSize75x75: true,
         withReleases: true,
+        withReleaseGroups: true,
+        withReleaseCount: true,
         ...params,
       },
     });

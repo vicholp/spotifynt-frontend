@@ -12,7 +12,7 @@
         class="opacity-90 aspect-square bg-cover relative rounded hover:opacity-100 transition duration-300"
       >
         <div class="flex flex-row items-end h-full w-full text-white justify-around text-opacity-90  pointer-events-none transition duration-300">
-          <div class="flex flex-col w-full items-center gap-3 pointer-events-auto py-2 px-3 bg-black bg-opacity-60">
+          <div class="flex flex-col w-full items-center gap-3 pointer-events-auto py-2 px-3 bg-black bg-opacity-60 rounded-b">
             <RouterLink
               class="text-sm"
               :to="{ name: 'album.show', params: { albumId: album.id } }"

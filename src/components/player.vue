@@ -55,6 +55,8 @@ import StatsApi from '@/api/stats';
 const TIME_AFTER_LISTENED = 240; // [s]
 const PROGRESS_AFTER_LISTENED = 0.5; // [%]
 
+const INT_MAX = 999999999;
+
 export default {
   components: {
     PlayerBar,
@@ -104,6 +106,28 @@ export default {
     this.$refs.player.src = `${this.playerStore.currentTrack.url}`; // eslint-disable-line
   },
   methods: {
+    getBestFile(files) {
+      const extensionOrder = {
+        '.flac': 0,
+        '.mp3': 1,
+      };
+
+      const sourceOrder = {
+        'user_upload': 0,
+        'alpha_plugin': 1,
+      };
+
+      return files.sort((a, b) => {
+        const extA = extensionOrder[a.extension] ?? INT_MAX;
+        const extB = extensionOrder[b.extension] ?? INT_MAX;
+        if (extA !== extB) {
+          return extA - extB;
+        }
+        const srcA = sourceOrder[a.source] ?? INT_MAX;
+        const srcB = sourceOrder[b.source] ?? INT_MAX;
+        return srcA - srcB;
+      })[0];
+    },
     clearTrack() {
       this.$refs.player.src = ``;
       this.$refs.playerPreloader.src = ``;
@@ -111,13 +135,17 @@ export default {
     loadNextTrack() {
       const nextTrack = this.playerStore.getNextTrack;
 
-      this.$refs.playerPreloader.src = `${nextTrack.url}`; // eslint-disable-line
+      const url = this.getBestFile(nextTrack.files)?.url;
+
+      this.$refs.playerPreloader.src = `${url}`; // eslint-disable-line
     },
     loadMetadata(event) {
       this.totalTime = event.target.duration;
     },
     loadTrack(track) {
-      this.$refs.player.src = `${track.files[0].url}`;
+      const url = this.getBestFile(track.files)?.url;
+
+      this.$refs.player.src = `${url}`;
       this.$refs.playerPreloader.src = '';
 
       document.title = `${track.title}`;

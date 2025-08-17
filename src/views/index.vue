@@ -83,7 +83,7 @@ export default {
       if (this.query.length === 0) {
         this.queryResults = [];
 
-
+        this.$router.push({ query: { } });
         return;
       }
       const initialQuery = this.query;
@@ -94,10 +94,12 @@ export default {
         const finalQuery = this.query;
         if (finalQuery !== initialQuery) return;
 
+        this.$router.push({ query: { q: this.query } });
 
         const queryResults = {
           'albums': results?.albums,
           'tracks': results?.tracks,
+          'artist': results?.artists,
         };
         this.queryResults = queryResults;
       }, WAITING_TIME_QUERY);

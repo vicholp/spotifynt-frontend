@@ -27,7 +27,7 @@ const router = createRouter({
     { path: '/servers/create', component: ServersCreate, props: true },
     { path: '/servers/:id', component: ServersShow, props: true },
 
-    { path: '/artists/:id', component: Artist, props: true },
+    { path: '/artists/:id', component: Artist, props: true, name: 'artist.show' },
     { path: '/albums/:albumId', component: Album, props: true, name: 'album.show' },
     { path: '/tracks/:id', component: Track, props: true },
 

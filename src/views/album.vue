@@ -10,9 +10,13 @@
         <h2 class="text-xl font-bold text-center">
           {{ album?.title }}
         </h2>
-        <h3 class="text-sm text-center">
+        <RouterLink
+          v-if="album?.artist"
+          :to="{ name: 'artist.show', params: { id: album?.artist?.id } }"
+          class="text-sm text-center"
+        >
           {{ album?.artist?.name }}
-        </h3>
+        </RouterLink>
       </div>
 
       <div class="flex flex-col gap-3 bg-white dark:bg-white dark:bg-opacity-5 pb-3 p-5 rounded">

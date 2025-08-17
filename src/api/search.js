@@ -9,6 +9,7 @@ export default {
         withArtSize500x500: true,
         withArtSize250x250: true,
         withRelease: true,
+        withReleases: true,
       },
     });
   },

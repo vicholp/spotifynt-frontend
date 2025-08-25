@@ -72,6 +72,14 @@ export default {
     this.loadTrack();
   },
 
+  async playlistRemoveIndex(int) {
+    if (this.playlist.index >= int) {
+      this.playlist.index -= 1;
+    }
+    this.playlist.tracks = this.playlist.tracks.filter((_, index) => index !== int);
+    this.playlist.count--;
+  },
+
   async loadTrack() {
     this.currentTrack = this.playlist.tracks[this.playlist.index];
   },

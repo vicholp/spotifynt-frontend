@@ -17,40 +17,15 @@
       ref="playerPreloader"
       preload="auto"
     />
-    <transition name="slide-fade-down">
-      <player-overlay
-        v-if="playerOverlay"
-        :auth-user="authUser"
-        @player-play="playPause"
-        @player-next="nextTrack"
-        @player-prev="previousTrack"
-        @toggle-overlay="playerOverlay = !playerOverlay"
-      />
-    </transition>
-    <transition name="slide-fade-up">
-      <player-bar
-        v-if="!playerOverlay"
-        :progress="progressPercent"
-        :actual="playerStore.currentTrack"
-        :playing="playerStore.status.playing"
-        :loaded="playerStore.playlist.tracks.length > 0"
-        :loading="loading"
-        @player-play="playPause"
-        @player-next="nextTrack"
-        @player-prev="previousTrack"
-        @toggle-overlay="playerOverlay = !playerOverlay"
-      />
-    </transition>
   </div>
 </template>
 <script>
-import PlayerBar from './playerBar.vue';
 import PlayerStore from '@/stores/player';
 import ServerStore from '@/stores/server';
 
-import PlayerOverlay from '@/components/player/index';
-
 import StatsApi from '@/api/stats';
+
+import PlayerBus from '@/bus/player';
 
 const TIME_AFTER_LISTENED = 240; // [s]
 const PROGRESS_AFTER_LISTENED = 0.5; // [%]
@@ -58,20 +33,16 @@ const PROGRESS_AFTER_LISTENED = 0.5; // [%]
 const INT_MAX = 999999999;
 
 export default {
-  components: {
-    PlayerBar,
-    PlayerOverlay,
-  },
   props: {
     authUser: {
       default: () => {},
       type: Object,
     },
   },
+
   setup() {
     const playerStore = PlayerStore();
     const serverStore = ServerStore();
-
     return { playerStore, serverStore };
   },
   data() {
@@ -97,7 +68,16 @@ export default {
       }
     },
   },
+  beforeMount() {
+    PlayerBus.off("next", this.nextTrack);
+    PlayerBus.off("previous", this.previousTrack);
+    PlayerBus.off("playpause", this.playPause);
+  },
   mounted() {
+    PlayerBus.on("next", this.nextTrack);
+    PlayerBus.on("previous", this.previousTrack);
+    PlayerBus.on("playpause", this.playPause);
+
     if (Object.keys(this.playerStore.currentTrack).length === 0){
       document.title = 'spotifynt';
       return;
@@ -212,34 +192,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.slide-fade-down-enter-active {
-  transition: all 0.1s ease-out;
-}
-
-.slide-fade-down-leave-active {
-  transition: all 0.1s ease-in;
-}
-
-.slide-fade-down-enter-from,
-.slide-fade-down-leave-to {
-  transform: translateY(50%);
-  opacity: 0;
-}
-
-
-.slide-fade-up-enter-active {
-  transition: all 0.1s ease-out;
-}
-
-.slide-fade-up-leave-active {
-  transition: all 0.1s ease-in;
-}
-
-.slide-fade-up-enter-from,
-.slide-fade-up-leave-to {
-  transform: translateY(-50%);
-  opacity: 0;
-}</style>
-

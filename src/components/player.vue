@@ -22,10 +22,15 @@
 <script>
 import PlayerStore from '@/stores/player';
 import ServerStore from '@/stores/server';
+import DevicesStore from '@/stores/devices';
 
 import StatsApi from '@/api/stats';
 
 import PlayerBus from '@/bus/player';
+
+import {useEcho, echo } from "@laravel/echo-vue";
+import { camelizeKeys } from 'humps';
+
 
 const TIME_AFTER_LISTENED = 240; // [s]
 const PROGRESS_AFTER_LISTENED = 0.5; // [%]
@@ -43,6 +48,29 @@ export default {
   setup() {
     const playerStore = PlayerStore();
     const serverStore = ServerStore();
+    const devicesStore = DevicesStore();
+
+
+    useEcho("App.Models.UserPlayingStatus.1", "UserPlayingStatusUpdatedEvent", (e) => {
+      const playerStateOld = e.player_state;
+      const playerState = camelizeKeys(playerStateOld);
+
+      const playingInThisDevice = playerState.playingDevice === devicesStore.thisDeviceUuid;
+
+      if (playerStore.localMode) {
+        console.log('Received playing status update from server, but ignoring it because local mode is enabled');
+        return;
+      }
+
+      playerStore.$patch({
+        ...playerState,
+        initialized: true,
+        playingInThisDevice,
+      });
+    });
+
+    window.echo = echo;
+
     return { playerStore, serverStore };
   },
   data() {
@@ -59,11 +87,39 @@ export default {
     };
   },
   watch: {
-    'playerStore.currentTrack'(track) {
+    'playerStore.currentTrack.id'() {
+      const track = this.playerStore.currentTrack;
+      console.debug('Current track changed:', track);
       if (Object.keys(track).length !== 0){
         this.loadTrack(track);
       }else {
         document.title = 'spotifynt';
+        this.clearTrack();
+      }
+    },
+    'playerStore.status.playing'(playing) {
+      console.debug('Playing status changed:', playing);
+      if (playing) {
+        if (this.playerStore.playingInThisDevice) {
+          this.$refs.player.play();
+        }
+      } else {
+        if (this.playerStore.playingInThisDevice) {
+          this.$refs.player.pause();
+        }
+      }
+    },
+    'playerStore.initialized'(initialized) {
+      if (initialized) {
+        this.initialLoad();
+      }
+    },
+    'playerStore.playingInThisDevice'(playingInThisDevice) {
+      console.debug('Playing in this device changed:', playingInThisDevice);
+      if (playingInThisDevice) {
+        this.initialLoad();
+      } else{
+        this.playerStore.status.playing = false;
         this.clearTrack();
       }
     },
@@ -77,15 +133,24 @@ export default {
     PlayerBus.on("next", this.nextTrack);
     PlayerBus.on("previous", this.previousTrack);
     PlayerBus.on("playpause", this.playPause);
-
-    if (Object.keys(this.playerStore.currentTrack).length === 0){
-      document.title = 'spotifynt';
-      return;
-    }
-    document.title = `${this.playerStore.currentTrack.title}`;
-    this.$refs.player.src = `${this.playerStore.currentTrack.url}`; // eslint-disable-line
   },
   methods: {
+    initialLoad() {
+      if (Object.keys(this.playerStore.currentTrack).length === 0){
+        document.title = 'spotifynt';
+        return;
+      }
+
+      const currentTrack = this.playerStore.currentTrack;
+
+      if (currentTrack && Object.keys(currentTrack).length !== 0) {
+        document.title = `${this.playerStore.currentTrack.title}`;
+        if (this.playerStore.playingInThisDevice) {
+          this.$refs.player.src = this.getBestFile(this.playerStore.currentTrack.files)?.url;
+          this.playerStore.status.playing = false;
+        }
+      }
+    },
     getBestFile(files) {
       const extensionOrder = {
         '.flac': 0,
@@ -123,10 +188,13 @@ export default {
       this.totalTime = event.target.duration;
     },
     loadTrack(track) {
+      console.debug('Loading track...', track.title);
       const url = this.getBestFile(track.files)?.url;
 
-      this.$refs.player.src = `${url}`;
-      this.$refs.playerPreloader.src = '';
+      if (this.playerStore.playingInThisDevice) {
+        this.$refs.player.src = `${url}`;
+        this.$refs.playerPreloader.src = '';
+      }
 
       document.title = `${track.title}`;
       this.listened = false;
@@ -134,12 +202,17 @@ export default {
       this.playPause('play');
     },
     playPause(action = null) {
-      if (this.$refs.player.paused || action === 'play') {
+      if (!this.playerStore.status.playing || action === 'play') {
         this.playerStore.status.playing = true;
-        this.$refs.player.play();
-      } else if (!this.$refs.player.paused || action === 'pause') {
+        if (this.playerStore.playingInThisDevice) {
+          this.$refs.player.play();
+        }
+      } else if (this.playerStore.status.playing || action === 'pause') {
         this.playerStore.status.playing = false;
-        this.$refs.player.pause();
+
+        if (this.playerStore.playingInThisDevice) {
+          this.$refs.player.pause();
+        }
       }
       this.loadMediaMetadata(this.playerStore.currentTrack);
     },

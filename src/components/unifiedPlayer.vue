@@ -62,7 +62,12 @@
                 >FLAC</span>
               </div>
             </div>
-            <div :class="`flex items-center ${playlistLoaded ? 'text-white text-opacity-100' : 'text-white text-opacity-30'}`">
+            <div :class="`flex items-center mr-2 p-1 text-xl rounded ${playlistLoaded ? 'text-opacity-100 text-primary-500' : 'text-black text-opacity-30 dark:text-white'}`">
+              <div v-if="!playerStore.playingInThisDevice">
+                <span class="iconify" data-icon="mdi:wireless"></span>
+              </div>
+            </div>
+            <div :class="`flex items-center ${playlistLoaded ? 'text-black text-opacity-100 dark:text-white' : 'text-black text-opacity-30 dark:text-white'}`">
               <button
                 class="text-4xl"
                 @click="playerPrevious"
@@ -141,6 +146,18 @@
                 >MP3 {{ Math.round(currentTrackFirstFile?.bitrateBps / 1000) }} kbps</span>
               </div>
             </div>
+            <div
+              v-if="!playerStore.playingInThisDevice"
+              :class="`text-white text-xs font-bold px-2 py-0.5  rounded bg-primary-500`"
+            >
+              <div class="flex  gap-1 items-center">
+                <span
+                  class="iconify text-lg"
+                  data-icon="mdi:wireless"
+                />
+                playing in another device
+              </div>
+            </div>
             <div class="flex items-center">
               <button
                 class="text-4xl"
@@ -181,7 +198,93 @@
           </div>
         </div>
       </div>
-      <div :class="`${highShow ? 'xl:w-1/2 xl:mx-0' : 'hidden'}`">
+      <div :class="`${highShow ? 'xl:w-1/2 xl:mx-0 flex flex-col gap-2' : 'hidden'}`">
+        <div
+          v-if="highShow"
+          class="container mx-auto flex flex-col bg-white dark:bg-[#1C1C1C] sm:rounded"
+        >
+          <div class="flex justify-center divide-white divide-opacity-20 py-5 gap-10">
+            <button
+              type="button"
+              class="flex items-center text-sm font-bold"
+            >
+              <div
+                v-if="!playerStore.localMode"
+                class="flex items-center gap-1"
+                @click="localOnly()"
+              >
+                <span
+                  class="iconify"
+                  data-icon="mdi:local"
+                />
+                enable local only
+              </div>
+              <div
+                v-else
+                class="flex items-center gap-1"
+                @click="cloudMode()"
+              >
+                <span
+                  class="iconify"
+                  data-icon="mdi:cloud"
+                />
+                enable cloud play
+              </div>
+            </button>
+            <button
+              v-if="!playerStore.playingInThisDevice"
+              type="button"
+              class="flex items-center gap-1 text-sm font-bold"
+              @click="playInThisDevice()"
+            >
+              <span
+                class="iconify"
+                data-icon="mdi:speaker-play"
+              />
+              play here
+            </button>
+          </div>
+          <div class="flex flex-col divide-white divide-opacity-30">
+            <div
+              v-for="device in devicesStore.devices"
+              :key="device.uuid"
+              :class="`flex items-center bg-black transition duration-300 gap-5 px-2 sm:px-5
+                ${device.uuid === playerStore.playingDevice ? 'bg-opacity-20' : 'bg-opacity-0'}`"
+            >
+              <div class="flex items-center gap-1 py-3">
+                {{ device.name }}
+                <div
+                  v-if="device.uuid === playerStore.playingDevice && playerStore?.status?.playing"
+                >
+                  <span
+                    class="text-xs iconify animate-[spin_10s_linear_infinite] "
+                    data-icon="streamline-ultimate:cd-playing"
+                  />
+                </div>
+                <div
+                  v-else-if="device.uuid === playerStore.playingDevice && !playerStore?.status?.playing"
+                >
+                  <span
+                    class="text-xs iconify animate-none "
+                    data-icon="streamline-ultimate:cd-playing"
+                  />
+                </div>
+              </div>
+              <div class="py-3 ml-auto flex gap-2 ">
+                <div v-if="device.uuid === devicesStore.thisDeviceUuid">
+                  this device
+                </div>
+                <div
+                  v-if="device.uuid !== playerStore.playingDevice"
+                  class="cursor-pointer"
+                  @click="playInRemoteDevice(device.uuid)"
+                >
+                  play here
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div
           v-if="highShow"
           class="container mx-auto flex flex-col bg-white dark:bg-[#1C1C1C] sm:rounded"
@@ -244,13 +347,14 @@
 
 import playerStore from '@/stores/player';
 import PlayerBus from '@/bus/player';
-import { transformVNodeArgs } from 'vue';
+import devicesStore from '@/stores/devices';
 
 
 export default {
   setup(){
     return {
       playerStore: playerStore(),
+      devicesStore: devicesStore(),
     };
   },
   data() {
@@ -301,6 +405,18 @@ export default {
     },
   },
   methods: {
+    playInThisDevice() {
+      this.playerStore.playInThisDevice();
+    },
+    playInRemoteDevice(uuid) {
+      this.playerStore.playInRemoteDevice(uuid);
+    },
+    localOnly() {
+      this.playerStore.localOnly();
+    },
+    cloudMode() {
+      this.playerStore.cloudMode();
+     },
     handleTransitionStart(event) {
       if (event.propertyName != 'opacity') {
         return;

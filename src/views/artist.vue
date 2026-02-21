@@ -11,7 +11,17 @@
         >
         <div class="flex items-center   col-span-1">
           <div class="font-medium flex flex-col gap-1">
-            {{ artist?.name }}
+            <div class="flex items-center gap-2">
+              {{ artist?.name }}
+              <span
+                v-if="artist?.source === 'musicbrainz'"
+              />
+              <span
+                v-else-if="artist?.source === 'alpha'"
+                class="iconify "
+                data-icon="mdi:youtube"
+              />
+            </div>
             <div class="text-sm">
               {{ artist?.releases.length }} releases
             </div>
@@ -21,7 +31,22 @@
           </div>
         </div>
       </div>
-
+      <div class="flex flex-col gap-3 bg-white dark:bg-white dark:bg-opacity-5 pb-3 p-5 rounded" v-if="artist?.alphaId">
+        <div class="flex justify-between items-center">
+          <h3 class="font-bold">
+            Discover
+          </h3>
+        </div>
+        <div class="flex flex-col  divide-y divide-white divide-opacity-5">
+          <RouterLink
+            v-if="artist?.alphaId"
+            :to="{ name: 'discover.alpha.artist', params: { id: artist.alphaId } }"
+            class="flex py-3 items-center pr-3"
+          >
+            Alpha
+          </RouterLink>
+        </div>
+      </div>
       <div class="flex flex-col gap-3 bg-white dark:bg-white dark:bg-opacity-5 pb-3 p-5 rounded">
         <div class="flex justify-between items-center">
           <h3 class=" font-bold">

@@ -9,4 +9,8 @@ export default () => ({
     playing: false,
     time: 0,
   },
+  playingDevice: null,
+  playingInThisDevice: false,
+  localMode: false,
+  initialized: false,
 });

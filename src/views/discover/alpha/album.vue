@@ -41,9 +41,17 @@
             v-for="track in album?.tracks"
             :key="track.id"
             :track="track"
-            class="flex py-3 items-center pr-3"
+            class="flex py-3 items-center pr-3 gap-3"
           >
-            {{ track.title }}
+            <div>
+              {{ track.title }}
+            </div>
+            <div class="text-sm" v-if="isReadyToListen(track)" @click="addTrack(track)">
+              listen
+            </div>
+            <div class="text-sm" v-else @click="downloadTrack(track.videoId)">
+              download
+            </div>
           </div>
         </div>
       </div>
@@ -56,6 +64,8 @@
 import Layout from '@/layouts/main.vue';
 
 import DiscoverApi from '@/api/discover';
+import PlayerStore from '@/stores/player';
+
 
 export default {
   name: 'discover.alpha.album',
@@ -66,15 +76,34 @@ export default {
     return {
       album: null,
       albumId: this.$route.params.id,
+      pendingDownloads: []
+
     };
   },
+  setup() {
+    const playerStore = PlayerStore();
+    return { playerStore };
+  },
   async mounted() {
-    const response = await DiscoverApi.alpha.album(this.albumId);
+    const response = await DiscoverApi.alpha.album(this.albumId, { withFiles: true});
     this.album = response.data;
   },
   methods: {
     async download() {
       await DiscoverApi.alpha.downloadAlbum(this.albumId);
+    },
+    isReadyToListen(track) {
+      return track?.spotifyntTrack?.files?.length > 0;
+    },
+    async downloadTrack(trackId) {
+      await DiscoverApi.alpha.downloadTrack(this.albumId, trackId);
+
+      this.pendingDownloads.push(trackId);
+
+    },
+    addTrack(track) {
+      const trackId = track?.spotifyntTrack?.id;
+      this.playerStore.playlistAddTrackById(trackId);
     },
   },
 };

@@ -18,7 +18,7 @@
             Albums
           </h3>
         </div>
-        <div class="flex flex-col  divide-y divide-white divide-opacity-5">
+        <div class="flex flex-col divide-y divide-white divide-opacity-5">
           <RouterLink
             v-for="album in artist?.albums?.results"
             :key="album.id"
@@ -39,7 +39,6 @@ import Layout from '@/layouts/main.vue';
 import DiscoverApi from '@/api/discover';
 
 export default {
-  name: 'discover.alpha.artist',
   components: {
     Layout,
   },

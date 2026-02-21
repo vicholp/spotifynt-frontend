@@ -45,6 +45,7 @@
         <QueryResults
           v-else
           :results="queryResults"
+          :query="query"
         />
       </KeepAlive>
     </div>

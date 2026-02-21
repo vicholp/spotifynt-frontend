@@ -2,11 +2,9 @@ import { defineStore } from 'pinia';
 
 import actions from './actions';
 import state from './state';
-import getters from './getters';
 
-export default defineStore('player', {
+export default defineStore('devices', {
   actions,
   state,
-  persist: false,
-  getters,
+  persist: true,
 });

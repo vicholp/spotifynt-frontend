@@ -6,9 +6,6 @@ const api = axios.create();
 
 api.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
-// api.defaults.withCredentials = true;
-// api.defaults.withXSRFToken = true;
-
 api.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
 
 api.interceptors.response.use(
@@ -21,6 +18,7 @@ api.interceptors.response.use(
   },
   error => {
     if (error.response.status === 401) {
+      localStorage.removeItem('token');
       router.push({ name: 'auth.login' });
     }
 
@@ -30,6 +28,13 @@ api.interceptors.response.use(
 
 api.interceptors.request.use(config => {
   const newConfig = { ...config };
+
+  if (localStorage.getItem('token')) {
+    newConfig.headers['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+  }
+  if (window.echo() && window.echo().socketId && typeof window.echo().socketId === 'function') {
+    newConfig.headers['X-Socket-ID'] = window.echo().socketId();
+  }
   if (newConfig.headers['Content-Type'] === 'multipart/form-data') {
     return newConfig;
   }

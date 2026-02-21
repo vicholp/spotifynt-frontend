@@ -56,14 +56,16 @@ export default {
   methods: {
     async login() {
       const response = await authApi.login({
-        'email': this.email,
+        'username': this.email,
         'password': this.password,
       });
 
       if (response.status === 200) {
-        const me = (await userApi.me()).data.data;
-
+        const me = response.data.user;
         this.userStore.setUser(me);
+
+        localStorage.setItem('token', response.data.token);
+
         this.$router.push('/');
       }
     },

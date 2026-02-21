@@ -7,9 +7,19 @@
         class="max-w-[200px] mx-auto rounded"
       >
       <div class="mx-auto">
-        <h2 class="text-xl font-bold text-center">
-          {{ album?.title }}
-        </h2>
+        <div class="flex items-center gap-2">
+          <div class="text-xl font-bold text-center">
+            {{ album?.title }}
+          </div>
+          <span
+            v-if="album?.source === 'musicbrainz'"
+          />
+          <span
+            v-else-if="album?.source === 'alpha'"
+            class="iconify "
+            data-icon="mdi:youtube"
+          />
+        </div>
         <RouterLink
           v-if="album?.artist"
           :to="{ name: 'artist.show', params: { id: album?.artist?.id } }"
@@ -19,7 +29,7 @@
         </RouterLink>
       </div>
 
-      <div class="flex flex-col gap-3 bg-white dark:bg-white dark:bg-opacity-5 pb-3 p-5 rounded">
+      <div class="flex flex-col gap-3 bg-white dark:bg-white dark:bg-opacity-5 pb-3 p-5 rounded" v-if="artist?.alphaId">
         <div class="flex justify-between items-center">
           <h3 class="font-bold">
             Discover

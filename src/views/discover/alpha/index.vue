@@ -65,17 +65,22 @@ export default {
   components: {
     Layout,
   },
-
   data() {
     return {
-      query: '',
+      query: this.$route.query.initialQuery || '',
       queryResults: null,
       timeout: null,
+      loading: false,
     };
+  },
+  mounted() {
+    if (this.query !== '') {
+      this.fetchQueryResults();
+    }
   },
   methods: {
     async sendQuery() {
-      if (this.query.trim() === '') {
+      if (this.query === '') {
         this.queryResults = null;
         return;
       }
@@ -93,10 +98,13 @@ export default {
     },
 
     async fetchQueryResults() {
-      if (this.query.trim() === '') {
+      if (this.query === '') {
         this.queryResults = null;
         return;
       }
+
+      this.queryResults = null;
+      this.loading = true;
 
       try {
         const response = await DiscoverApi.query({q: this.query});

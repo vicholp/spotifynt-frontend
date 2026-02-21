@@ -9,22 +9,32 @@ export default {
     });
   },
   alpha: {
-    artist(id) {
+    artist(id, params) {
       return api({
         method: 'get',
         url: `api/alpha/artist/${id}`,
+        params,
       });
     },
-    album(id) {
+    album(id, params) {
       return api({
         method: 'get',
         url: `api/alpha/album/${id}`,
+        params,
       });
     },
-    downloadAlbum(id) {
+    downloadAlbum(id, params) {
       return api({
         method: 'post',
         url: `api/alpha/album/${id}/download`,
+        params,
+      });
+    },
+    downloadTrack(albumId, trackId, params) {
+      return api({
+        method: 'post',
+        url: `api/alpha/album/${albumId}/track/${trackId}/download`,
+        params,
       });
     },
   },

@@ -2,8 +2,28 @@ import ReleaseApi from '../../api/release';
 import TrackApi from '../../api/track';
 
 import MessagesStore from '../messages';
+import DevicesStore from '../devices';
 
 export default {
+  playInThisDevice() {
+    const devicesStore = DevicesStore();
+
+    this.playingDevice = devicesStore.thisDeviceUuid;
+    this.playingInThisDevice = true;
+  },
+  playInRemoteDevice(uuid) {
+    this.playingDevice = uuid;
+    this.playingInThisDevice = false;
+  },
+  localOnly() {
+    this.localMode = true;
+    localStorage.setItem('local_mode', 'true');
+    this.playInThisDevice();
+  },
+  cloudMode() {
+    this.localMode = false;
+    localStorage.setItem('local_mode', 'false');
+  },
   playlistAddTrack(track) {
     this.playlist.tracks.push(track);
     this.playlist.count++;

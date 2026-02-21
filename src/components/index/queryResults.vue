@@ -3,11 +3,11 @@
     class="col-span-12 grid grid-cols-12 gap-5"
   >
     <RouterLink
-      :to="{ name: 'discover.alpha.index' }"
+      :to="{ name: 'discover.alpha.index', query: { initialQuery: query } }"
       class="col-span-12 bg-white bg-opacity-5 text-white text-opacity-90 rounded shadow flex flex-col p-3 h-min-[5px] cursor-pointer hover:bg-opacity-10 transition duration-200"
     >
       <div>
-        Descubrir
+        discover
       </div>
     </RouterLink>
 
@@ -78,6 +78,10 @@ export default {
   props: {
     results: {
       type: Object,
+      required: true,
+    },
+    query: {
+      type: String,
       required: true,
     },
   },

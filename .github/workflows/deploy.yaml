@@ -65,6 +65,10 @@ jobs:
           tags: ${{ secrets.DOCKER_REGISTRY }}/${{ github.repository }}-${{ steps.dockerfile-data.outputs.image-name }}:${{ github.ref_name }}-latest
           build-args: |
             "VITE_BACKEND_URL=${{ vars.VITE_BACKEND_URL }}"
+            "VITE_REVERB_APP_KEY=${{ vars.VITE_REVERB_APP_KEY }}"
+            "VITE_REVERB_HOST=${{ vars.VITE_REVERB_HOST }}"
+            "VITE_REVERB_PORT=${{ vars.VITE_REVERB_PORT }}"
+            "VITE_REVERB_SCHEME=${{ vars.VITE_REVERB_SCHEME }}"
 
   deploy:
     # Deploy the Docker image to the remote server

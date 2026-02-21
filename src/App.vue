@@ -38,56 +38,63 @@ export default {
       this.$router.push('/auth/login');
     }
 
+
     const playerStore = PlayerStore();
     const devicesStore = DevicesStore();
-    const localMode = localStorage.getItem('local_mode');
-    if (localMode === 'true') {
-      playerStore.$patch({
-        playerStore,
-        localMode: true,
-        initialized: true,
-        playingInThisDevice: true,
-      });
-
-      return;
-    } else {
-      const playingStatusResponse = await userApi.me.getPlayingStatus();
-
-      if (playingStatusResponse.status === 200) {
-        const playerState = playingStatusResponse.data.data.playerState;
-
-        const playingInThisDevice = playerState.playingDevice === devicesStore.thisDeviceUuid;
 
 
+    try {
+      const localMode = localStorage.getItem('local_mode');
+      if (localMode === 'true') {
         playerStore.$patch({
-          ...playerState,
-          localMode: false,
+          playerStore,
+          localMode: true,
           initialized: true,
-          playingInThisDevice,
+          playingInThisDevice: true,
         });
+
+        return;
+      } else {
+        const playingStatusResponse = await userApi.me.getPlayingStatus();
+
+        if (playingStatusResponse.status === 200) {
+          const playerState = playingStatusResponse.data.data.playerState;
+
+          const playingInThisDevice = playerState.playingDevice === devicesStore.thisDeviceUuid;
+
+
+          playerStore.$patch({
+            ...playerState,
+            localMode: false,
+            initialized: true,
+            playingInThisDevice,
+          });
+        }
+
+        let deviceUuid = localStorage.getItem('device_uuid');
+
+        if (!deviceUuid) {
+          deviceUuid = crypto.randomUUID();
+          localStorage.setItem('device_uuid', deviceUuid);
+        }
+
+        devicesStore.setThisDeviceUuid(deviceUuid);
+
+        await deviceApi.upsert({
+          uuid: deviceUuid,
+          name: 'Spotifynt Web Player',
+          type: 'web',
+        });
+
+        const devices = await deviceApi.index();
+        devicesStore.setDevices(devices.data.data);
       }
 
-      let deviceUuid = localStorage.getItem('device_uuid');
 
-      if (!deviceUuid) {
-        deviceUuid = crypto.randomUUID();
-        localStorage.setItem('device_uuid', deviceUuid);
-      }
-
-      devicesStore.setThisDeviceUuid(deviceUuid);
-
-      await deviceApi.upsert({
-        uuid: deviceUuid,
-        name: 'Spotifynt Web Player',
-        type: 'web',
-      });
-
-      const devices = await deviceApi.index();
-      devicesStore.setDevices(devices.data.data);
+      playerStore.$subscribe(this.updatePlayingStatus);
+    } catch (error) {
+      console.error('Error during app initialization:', error);
     }
-
-
-    playerStore.$subscribe(this.updatePlayingStatus);
   },
   methods: {
     async updatePlayingStatus(mutation, state) {

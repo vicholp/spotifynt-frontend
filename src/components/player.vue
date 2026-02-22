@@ -50,26 +50,29 @@ export default {
     const serverStore = ServerStore();
     const devicesStore = DevicesStore();
 
+    try{
+      useEcho("App.Models.UserPlayingStatus.1", "UserPlayingStatusUpdatedEvent", (e) => {
+        const playerStateOld = e.player_state;
+        const playerState = camelizeKeys(playerStateOld);
 
-    useEcho("App.Models.UserPlayingStatus.1", "UserPlayingStatusUpdatedEvent", (e) => {
-      const playerStateOld = e.player_state;
-      const playerState = camelizeKeys(playerStateOld);
+        const playingInThisDevice = playerState.playingDevice === devicesStore.thisDeviceUuid;
 
-      const playingInThisDevice = playerState.playingDevice === devicesStore.thisDeviceUuid;
+        if (playerStore.localMode) {
+          console.log('Received playing status update from server, but ignoring it because local mode is enabled');
+          return;
+        }
 
-      if (playerStore.localMode) {
-        console.log('Received playing status update from server, but ignoring it because local mode is enabled');
-        return;
-      }
-
-      playerStore.$patch({
-        ...playerState,
-        initialized: true,
-        playingInThisDevice,
+        playerStore.$patch({
+          ...playerState,
+          initialized: true,
+          playingInThisDevice,
+        });
       });
-    });
 
-    window.echo = echo;
+      window.echo = echo;
+    } catch (error) {
+      console.error('Error setting up Echo:', error);
+    }
 
     return { playerStore, serverStore };
   },

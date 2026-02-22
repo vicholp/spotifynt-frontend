@@ -118,17 +118,10 @@ export default {
         return;
       }
 
-      if (this.debounceTimeout) {
-        clearTimeout(this.debounceTimeout);
-      }
+      const {playingInThisDevice: _, localMode: __, ...playerStoreState} = state;
+      console.log('Updating playing status...', playerStoreState);
 
-      this.debounceTimeout = setTimeout(async () => {
-        const playerStore = PlayerStore();
-        const {playingInThisDevice: _, localMode: __, ...playerStoreState} = playerStore.$state;
-        console.log('Updating playing status...', playerStoreState);
-
-        await userApi.me.setPlayingStatus({playerState: playerStoreState});
-      }, 10);
+      await userApi.me.setPlayingStatus({playerState: playerStoreState});
     },
   },
 };

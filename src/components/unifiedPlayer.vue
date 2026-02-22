@@ -44,7 +44,7 @@
             <div :class="`items-center flex mr-auto`">
               <div
                 v-if="loaded"
-                class="font-medium whitespace-nowrap overflow-hidden text-ellipsis max-w-34 sm:max-w-[45rem] w-full"
+                class="font-medium whitespace-nowrap overflow-hidden text-ellipsis max-w-32 sm:max-w-[45rem] w-full"
               >
                 {{ playerStore?.currentTrack?.title }} - {{ playerStore?.currentTrack?.release?.title }}
               </div>

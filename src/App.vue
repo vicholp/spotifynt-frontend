@@ -62,7 +62,6 @@ export default {
 
           const playingInThisDevice = playerState.playingDevice === devicesStore.thisDeviceUuid;
 
-
           playerStore.$patch({
             ...playerState,
             localMode: false,
@@ -71,10 +70,13 @@ export default {
           });
         } else {
           playerStore.$patch({
+            playerStore,
             localMode: false,
             initialized: true,
             playingInThisDevice: true,
           });
+
+          await userApi.me.setPlayingStatus({playerState: playerStore});
         }
 
         let deviceUuid = localStorage.getItem('device_uuid');

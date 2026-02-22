@@ -32,9 +32,7 @@ export default {
   },
   async mounted() {
     const token = localStorage.getItem('token');
-    if (token) {
-      this.$router.push('/');
-    } else {
+    if (!token) {
       this.$router.push('/auth/login');
     }
 

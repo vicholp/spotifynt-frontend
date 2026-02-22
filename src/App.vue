@@ -70,7 +70,7 @@ export default {
           });
         } else {
           playerStore.$patch({
-            playerStore,
+            ...playerStore,
             localMode: false,
             initialized: true,
             playingInThisDevice: true,

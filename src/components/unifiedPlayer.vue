@@ -44,7 +44,7 @@
             <div :class="`items-center flex mr-auto`">
               <div
                 v-if="loaded"
-                class="font-medium whitespace-nowrap overflow-hidden text-ellipsis max-w-36 sm:max-w-[45rem] w-full"
+                class="font-medium whitespace-nowrap overflow-hidden text-ellipsis max-w-34 sm:max-w-[45rem] w-full"
               >
                 {{ playerStore?.currentTrack?.title }} - {{ playerStore?.currentTrack?.release?.title }}
               </div>
@@ -62,7 +62,7 @@
                 >FLAC</span>
               </div>
             </div>
-            <div :class="`flex items-center mr-1 sm:mr-2 p-1 text-xl rounded ${playlistLoaded ? 'text-opacity-100 text-primary-500' : 'text-black text-opacity-30 dark:text-white'}`">
+            <div :class="`flex items-center mr-0 sm:mr-2 p-1 text-xl rounded ${playlistLoaded ? 'text-opacity-100 text-primary-500' : 'text-black text-opacity-30 dark:text-white'}`">
               <div v-if="!playerStore.playingInThisDevice">
                 <span class="iconify" data-icon="mdi:wireless"></span>
               </div>

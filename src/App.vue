@@ -69,6 +69,12 @@ export default {
             initialized: true,
             playingInThisDevice,
           });
+        } else {
+          playerStore.$patch({
+            localMode: false,
+            initialized: true,
+            playingInThisDevice: true,
+          });
         }
 
         let deviceUuid = localStorage.getItem('device_uuid');

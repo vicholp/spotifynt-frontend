@@ -57,7 +57,7 @@ export default {
       } else {
         const playingStatusResponse = await userApi.me.getPlayingStatus();
 
-        if (playingStatusResponse.status === 200) {
+        if (playingStatusResponse.status === 200 && playingStatusResponse?.data?.data?.playerState) {
           const playerState = playingStatusResponse.data.data.playerState;
 
           const playingInThisDevice = playerState.playingDevice === devicesStore.thisDeviceUuid;

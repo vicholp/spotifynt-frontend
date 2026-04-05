@@ -40,7 +40,6 @@
           <div
             v-for="track in album?.tracks"
             :key="track.id"
-            :track="track"
             class="flex py-3 items-center pr-3 gap-3"
           >
             <div>

@@ -23,6 +23,7 @@
 import PlayerStore from '@/stores/player';
 import ServerStore from '@/stores/server';
 import DevicesStore from '@/stores/devices';
+import UserStore from '@/stores/user';
 
 import StatsApi from '@/api/stats';
 
@@ -49,13 +50,18 @@ export default {
     const playerStore = PlayerStore();
     const serverStore = ServerStore();
     const devicesStore = DevicesStore();
+    const userStore = UserStore();
 
     try{
-      useEcho("App.Models.UserPlayingStatus.1", "UserPlayingStatusUpdatedEvent", (e) => {
+      const userId = userStore.user.id;
+
+      useEcho(`App.Models.UserPlayingStatus.${userId}`, "UserPlayingStatusUpdatedEvent", (e) => {
         const playerStateOld = e.player_state;
         const playerState = camelizeKeys(playerStateOld);
 
         const playingInThisDevice = playerState.playingDevice === devicesStore.thisDeviceUuid;
+
+        console.log('Received playing status update from Echo:', playerState);
 
         if (playerStore.localMode) {
           console.log('Received playing status update from server, but ignoring it because local mode is enabled');
@@ -74,7 +80,7 @@ export default {
       console.error('Error setting up Echo:', error);
     }
 
-    return { playerStore, serverStore };
+    return { playerStore, serverStore, userStore };
   },
   data() {
     return {
@@ -96,7 +102,6 @@ export default {
       if (Object.keys(track).length !== 0){
         this.loadTrack(track);
       }else {
-        document.title = 'spotifynt';
         this.clearTrack();
       }
     },
@@ -177,6 +182,7 @@ export default {
       })[0];
     },
     clearTrack() {
+      document.title = 'spotifynt';
       this.$refs.player.src = ``;
       this.$refs.playerPreloader.src = ``;
     },

@@ -36,10 +36,8 @@ export default {
       this.$router.push('/auth/login');
     }
 
-
     const playerStore = PlayerStore();
     const devicesStore = DevicesStore();
-
 
     try {
       const localMode = localStorage.getItem('local_mode');
@@ -117,7 +115,6 @@ export default {
       }
 
       const {playingInThisDevice: _, localMode: __, ...playerStoreState} = state;
-      console.log('Updating playing status...', playerStoreState);
 
       await userApi.me.setPlayingStatus({playerState: playerStoreState});
     },

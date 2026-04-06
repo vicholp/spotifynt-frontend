@@ -40,68 +40,64 @@ export default {
     const devicesStore = DevicesStore();
 
     try {
-      const localMode = localStorage.getItem('local_mode');
-      if (localMode === 'true') {
+      playerStore.$subscribe(this.updatePlayingStatus);
+    } catch (error) {
+      console.error('Error subscribing to player store updates:', error);
+    }
+
+    const localMode = localStorage.getItem('local_mode');
+    if (localMode === 'true') {
+      playerStore.$patch({
+        playerStore,
+        localMode: true,
+        initialized: true,
+        playingInThisDevice: true,
+      });
+
+      return;
+    } else {
+      const playingStatusResponse = await userApi.me.getPlayingStatus();
+
+      if (playingStatusResponse?.status === 200 && playingStatusResponse?.data?.data?.playerState) {
+        const playerState = playingStatusResponse.data.data.playerState;
+
+        const playingInThisDevice = playerState.playingDevice === devicesStore.thisDeviceUuid;
+
         playerStore.$patch({
-          playerStore,
-          localMode: true,
+          ...playerState,
+          localMode: false,
+          initialized: true,
+          playingInThisDevice,
+        });
+      } else {
+        playerStore.$patch({
+          ...playerStore.state,
+          localMode: false,
           initialized: true,
           playingInThisDevice: true,
         });
 
-        return;
-      } else {
-        const playingStatusResponse = await userApi.me.getPlayingStatus();
-
-        if (playingStatusResponse.status === 200 && playingStatusResponse?.data?.data?.playerState) {
-          const playerState = playingStatusResponse.data.data.playerState;
-
-          const playingInThisDevice = playerState.playingDevice === devicesStore.thisDeviceUuid;
-
-          playerStore.$patch({
-            ...playerState,
-            localMode: false,
-            initialized: true,
-            playingInThisDevice,
-          });
-        } else {
-          playerStore.$patch({
-            ...playerStore,
-            localMode: false,
-            initialized: true,
-            playingInThisDevice: true,
-          });
-
-          await userApi.me.setPlayingStatus({playerState: playerStore});
-        }
-
-
-        let deviceUuid = localStorage.getItem('device_uuid');
-
-        if (!deviceUuid) {
-          deviceUuid = crypto.randomUUID();
-          localStorage.setItem('device_uuid', deviceUuid);
-        }
-
-        devicesStore.setThisDeviceUuid(deviceUuid);
-
-        await deviceApi.upsert({
-          uuid: deviceUuid,
-          name: 'Spotifynt Web Player',
-          type: 'web',
-        });
-
-        const devices = await deviceApi.index();
-        devicesStore.setDevices(devices.data.data);
+        await userApi.me.setPlayingStatus({playerState: playerStore});
       }
-    } catch (error) {
-      console.error('Error during app initialization:', error);
-    }
 
-    try {
-      playerStore.$subscribe(this.updatePlayingStatus);
-    } catch (error) {
-      console.error('Error subscribing to player store updates:', error);
+
+      let deviceUuid = localStorage.getItem('device_uuid');
+
+      if (!deviceUuid) {
+        deviceUuid = crypto.randomUUID();
+        localStorage.setItem('device_uuid', deviceUuid);
+      }
+
+      devicesStore.setThisDeviceUuid(deviceUuid);
+
+      await deviceApi.upsert({
+        uuid: deviceUuid,
+        name: 'Spotifynt Web Player',
+        type: 'web',
+      });
+
+      const devices = await deviceApi.index();
+      devicesStore.setDevices(devices.data.data);
     }
   },
   methods: {

@@ -53,7 +53,7 @@ export default {
     const userStore = UserStore();
 
     try{
-      const userId = userStore.user.id;
+      const userId = userStore.user?.id;
 
       useEcho(`App.Models.UserPlayingStatus.${userId}`, "UserPlayingStatusUpdatedEvent", (e) => {
         const playerStateOld = e.player_state;

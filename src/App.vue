@@ -75,6 +75,7 @@ export default {
           await userApi.me.setPlayingStatus({playerState: playerStore});
         }
 
+
         let deviceUuid = localStorage.getItem('device_uuid');
 
         if (!deviceUuid) {
@@ -93,11 +94,14 @@ export default {
         const devices = await deviceApi.index();
         devicesStore.setDevices(devices.data.data);
       }
-
-
-      playerStore.$subscribe(this.updatePlayingStatus);
     } catch (error) {
       console.error('Error during app initialization:', error);
+    }
+
+    try {
+      playerStore.$subscribe(this.updatePlayingStatus);
+    } catch (error) {
+      console.error('Error subscribing to player store updates:', error);
     }
   },
   methods: {

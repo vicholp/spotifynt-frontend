@@ -20,7 +20,7 @@
             >
               <span class="justify-center items-center gap-1 font-bold whitespace-nowrap overflow-hidden overflow-ellipsis flex">
                 <span
-                  v-if="album.extensions.includes('.flac')"
+                  v-if="album?.extensions?.includes('.flac')"
                   class="iconify"
                   data-icon="mdi:high-definition-box"
                 />

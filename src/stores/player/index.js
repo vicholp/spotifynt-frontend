@@ -30,7 +30,7 @@ export default defineStore(
     const initialized = ref(false);
 
 
-    const { storeEvent } = useEvents();
+    // const { storeEvent } = useEvents();
 
     function playlistAddTrack(track, source = null, group = null) {
       this.playlist.tracks.push(track);
@@ -40,13 +40,13 @@ export default defineStore(
         this.loadTrack();
       }
 
-      storeEvent(RecordingAddedToQueueEvent.parse({
-        payload: {
-          recordingId: track.id,
-          source,
-          group,
-        },
-      }));
+      // storeEvent(RecordingAddedToQueueEvent.parse({
+      //   payload: {
+      //     recordingId: track.id,
+      //     source,
+      //     group,
+      //   },
+      // }));
     }
 
     function playlistShuffle() {
@@ -66,9 +66,9 @@ export default defineStore(
         ...remainingTracks.slice(this.playlist.index),
       ];
 
-      storeEvent(QueueShuffledEvent.parse({
-        payload: {},
-      }));
+      // storeEvent(QueueShuffledEvent.parse({
+      //   payload: {},
+      // }));
     }
 
     async function playlistClear() {
@@ -80,9 +80,9 @@ export default defineStore(
       this.status.playing = false;
       this.status.time = 0;
 
-      storeEvent(QueueClearedEvent.parse({
-        payload: {},
-      }));
+      // storeEvent(QueueClearedEvent.parse({
+      //   payload: {},
+      // }));
     }
 
     async function playlistAddRelease(releaseId, source = null, group = null) {
@@ -99,12 +99,12 @@ export default defineStore(
       const messagesStore = MessagesStore();
       messagesStore.addedTracks(release.tracks.length);
 
-      storeEvent(ReleaseAddedToQueueEvent.parse({
-        payload: {
-          releaseId,
-          source,
-        },
-      }));
+      // storeEvent(ReleaseAddedToQueueEvent.parse({
+      //   payload: {
+      //     releaseId,
+      //     source,
+      //   },
+      // }));
     }
 
     function getNextTrack() {

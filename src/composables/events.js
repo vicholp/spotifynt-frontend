@@ -20,6 +20,7 @@ const batcher = {
 setInterval(() => {
   const events = batcher.flush();
   if (events.length > 0) {
+    return;
     eventsApi.storeEvents(events).catch(error => {
       console.error('Error storing events:', error);
       events.forEach(event => batcher.add(event));
@@ -32,6 +33,7 @@ export function useEvents() {
   const userStore = useUserStore();
 
   async function storeEvent(event) {
+    return;
     const parsedEvent = StoredEvent.safeParse({
       ...event,
       sessionId: sessionStore.session?.id,

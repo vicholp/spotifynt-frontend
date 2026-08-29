@@ -84,7 +84,7 @@
             :class="`grid py-3 items-center pr-3 grid-cols-12
             text-white ${album.releaseCount ? 'text-opacity-100' : 'text-opacity-50'} `"
           >
-            <div class="col-span-10 flex gap-1">
+            <div class="col-span-8 flex gap-1">
               <span>{{ album.title }}</span>
             </div>
             <div class="col-span-2 text-sm flex gap-1">
@@ -97,6 +97,14 @@
                 {{ type }}
               </div>
             </div>
+            <RouterLink
+              :to="{ name: 'discover.alpha.index', query: { initialQuery: `${artist?.name} ${album.title}` } }"
+              class="col-span-2 text-sm text-right"
+            >
+              <div class="">
+                discover
+              </div>
+            </RouterLink>
           </div>
         </div>
       </div>

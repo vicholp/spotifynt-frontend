@@ -23,6 +23,13 @@ export default {
         params,
       });
     },
+    queryAlbum(params) {
+      return api({
+        method: 'get',
+        url: `api/alpha/album`,
+        params,
+      });
+    },
     downloadAlbum(id, params) {
       return api({
         method: 'post',

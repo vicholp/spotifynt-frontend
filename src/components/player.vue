@@ -6,7 +6,7 @@
     <audio
       ref="player"
       preload="auto"
-      @ended="nextTrack()"
+      @ended="ended"
       @loadedmetadata="loadMetadata"
       @timeupdate="checkPlayed"
       @canplaythrough="loadNextTrack"
@@ -24,14 +24,14 @@ import PlayerStore from '@/stores/player';
 import ServerStore from '@/stores/server';
 import DevicesStore from '@/stores/devices';
 import UserStore from '@/stores/user';
-
-import StatsApi from '@/api/stats';
-
 import PlayerBus from '@/bus/player';
 
 import {useEcho, echo } from "@laravel/echo-vue";
 import { camelizeKeys } from 'humps';
 
+import { useEvents } from '@/composables/events';
+
+import { RecordingPlayStartedEvent, RecordingSkippedBackwardEvent, RecordingSkippedEvent, RecordingPlayedEvent } from '@/schemas/events';
 
 const TIME_AFTER_LISTENED = 240; // [s]
 const PROGRESS_AFTER_LISTENED = 0.5; // [%]
@@ -51,6 +51,8 @@ export default {
     const serverStore = ServerStore();
     const devicesStore = DevicesStore();
     const userStore = UserStore();
+
+    const { storeEvent } = useEvents();
 
     try{
       const userId = userStore.user?.id;
@@ -75,12 +77,16 @@ export default {
         });
       });
 
+      useEcho(`App.Models.Recording`, ".RecordingCreated", (e) => {
+        console.log('asdfasdfasdfasdf', e);
+      });
+
       window.echo = echo;
     } catch (error) {
       console.error('Error setting up Echo:', error);
     }
 
-    return { playerStore, serverStore, userStore };
+    return { playerStore, serverStore, userStore, storeEvent };
   },
   data() {
     return {
@@ -196,6 +202,9 @@ export default {
     loadMetadata(event) {
       this.totalTime = event.target.duration;
     },
+    ended() {
+      this.playerStore.playlistSetIndex(1, true);
+    },
     loadTrack(track) {
       console.debug('Loading track...', track.title);
       const url = this.getBestFile(track.files)?.url;
@@ -209,6 +218,12 @@ export default {
       this.listened = false;
       this.playerStore.status.playing = false;
       this.playPause('play');
+
+      this.storeEvent(RecordingPlayStartedEvent.parse({
+        payload: {
+          recordingId: track.id,
+        },
+      }));
     },
     playPause(action = null) {
       if (!this.playerStore.status.playing || action === 'play') {
@@ -226,9 +241,21 @@ export default {
       this.loadMediaMetadata(this.playerStore.currentTrack);
     },
     nextTrack() {
+      this.storeEvent(RecordingSkippedEvent.parse({
+        payload: {
+          recordingId: this.playerStore.currentTrack.id,
+          playDuration: this.currentTime,
+        },
+      }));
       this.playerStore.playlistSetIndex(1, true);
     },
     previousTrack() {
+      this.storeEvent(RecordingSkippedBackwardEvent.parse({
+        payload: {
+          recordingId: this.playerStore.currentTrack.id,
+          playDuration: this.currentTime,
+        },
+      }));
       this.playerStore.playlistSetIndex(-1, true);
     },
     checkPlayed(event) {
@@ -241,13 +268,12 @@ export default {
       ) {
         this.listened = true;
 
-        let data = {
-          trackId: this.playerStore.currentTrack.id,
-          userId: this.authUser.id,
-          serverId: this.serverStore.activeServer.id,
-          releaseId: this.playerStore.currentTrack.release.id,
-        };
-        StatsApi.playedTrack(data);
+        this.storeEvent(RecordingPlayedEvent.parse({
+          payload: {
+            recordingId: this.playerStore.currentTrack.id,
+            playDuration: event.target.currentTime,
+          },
+        }));
       }
       if (this.playerStore.status.playing === false && event.target.currentTime > 1) {
         // StatsApi.nowPlaying(this.actual.id);

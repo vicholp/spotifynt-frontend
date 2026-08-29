@@ -12,4 +12,14 @@ export default {
       },
     });
   },
+  playlist(trackIds, params) {
+    return api({
+      method: 'post',
+      url: `api/recommendations/playlist`,
+      params: params,
+      data: {
+        trackIds,
+      },
+    });
+  },
 };

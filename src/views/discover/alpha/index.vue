@@ -40,8 +40,8 @@
         </div>
         <RouterLink
           v-for="album in queryResults?.alpha?.albums"
-          :key="album.id"
-          :to="{ name: 'discover.alpha.album', params: { id: album?.browseId ?? album?.id } }"
+          :key="album?.id"
+          :to="{ name: 'discover.alpha.album', params: { id: album?.browseId ?? album?.id} }"
           class="flex items-center gap-4"
         >
           <img
@@ -51,6 +51,24 @@
           >
           {{ album.title }}
         </RouterLink>
+      </div>
+      <div class="flex flex-col gap-6 bg-white dark:bg-white dark:bg-opacity-5 pb-3 p-5 rounded">
+        <div class="flex gap-4 font-bold">
+          Tracks
+        </div>
+        <div
+          v-for="song in queryResults?.alpha?.songs"
+          :key="song?.id"
+          class="flex items-center gap-4"
+          @click="handleTrack(song)"
+        >
+          <img
+            :src="song?.thumbnails[0]?.url"
+            alt="album cover"
+            class="inline-block w-12 h-12 rounded-full"
+          >
+          {{ song.title }}
+        </div>
       </div>
     </div>
   </layout>
@@ -79,6 +97,10 @@ export default {
     }
   },
   methods: {
+    async handleTrack(song) {
+      await DiscoverApi.alpha.downloadTrack(this.albumId, song.videoId);
+    },
+
     async sendQuery() {
       if (this.query === '') {
         this.queryResults = null;
@@ -112,6 +134,9 @@ export default {
       } catch (error) {
         this.queryResults = null;
       }
+
+      this.loading = false;
+      this.$router.replace({ query: { initialQuery: this.query } });
     },
   },
 };

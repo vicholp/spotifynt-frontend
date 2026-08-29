@@ -6,29 +6,41 @@
       :to="{ name: 'discover.alpha.index', query: { initialQuery: query } }"
       class="col-span-12 bg-white bg-opacity-5 text-white text-opacity-90 rounded shadow flex flex-col p-3 h-min-[5px] cursor-pointer hover:bg-opacity-10 transition duration-200"
     >
-      <div>
+      <div class="flex items-center gap-1">
+        <span
+          class="iconify bg-neutral-300 rounded-full text-black text-sm"
+          data-icon="mdi:alpha"
+        />
         discover
       </div>
     </RouterLink>
 
     <div class="col-span-12 grid grid-cols-12 gap-3 h-min-[5px]">
       <RouterLink
-        v-for="artist, index in results.artist"
+        v-for="artist in results.artist"
         :key="artist.id"
         :to="{ name: 'artist.show', params: { id: artist.id } }"
-        class="col-span-6 bg-white bg-opacity-5 rounded grid grid-cols-2 gap-10 p-5"
+        class="col-span-12 md:col-span-6 lg:col-span-4 bg-white bg-opacity-5 rounded gap-10 p-5"
       >
-        <img
-          v-if="index < 2"
-          :src="artist.art['250x250'][0]"
-          alt=""
-          class="col-span-1 rounded-full"
-        >
-        <div class="flex items-center   col-span-1">
-          <div class="font-medium flex flex-col gap-1">
-            {{ artist.name }}
-            <div class="text-sm">
-              {{ artist.releases.length }} releases
+        <div class="flex gap-5 items-center">
+          <img
+            :src="artist.art['250x250'][0]"
+            alt=""
+            class="rounded-full h-16"
+          >
+          <div class="flex items-center">
+            <div class="font-medium flex flex-col gap-1">
+              <div class="flex items-center gap-1">
+                <span
+                  v-if="artist?.source === 'alpha'"
+                  class="iconify bg-neutral-300 rounded-full text-black text-sm"
+                  data-icon="mdi:alpha"
+                />
+                {{ artist.name }}
+              </div>
+              <div class="text-sm">
+                {{ artist.releases.length }} releases
+              </div>
             </div>
           </div>
         </div>
@@ -38,20 +50,11 @@
     <div
       class="col-span-12 grid grid-cols-12 gap-3 h-min-[5px]"
     >
-      <AlbumPlaceholder
-        v-if="results.length == 0"
-      />
-      <AlbumPlaceholder
-        v-if="results.length == 0"
-      />
-      <AlbumPlaceholder
-        v-if="results.length == 0"
-      />
-
       <Album
         v-for="album in results.albums"
         :key="album.id"
         :album="album"
+        :source="AddedToQueueSource.enum.search"
       />
     </div>
     <div class="col-span-12 bg-white bg-opacity-5 text-white text-opacity-90 rounded shadow flex flex-col p-3 h-min-[5px]">
@@ -59,6 +62,7 @@
         v-for="track in results.tracks"
         :key="track.id"
         :track="track"
+        :source="AddedToQueueSource.enum.search"
       />
     </div>
   </div>
@@ -67,13 +71,14 @@
 
 import Album from '../album.vue';
 import SpTrack from '../track.vue';
-import AlbumPlaceholder from '../albumPlaceholder.vue';
+
+import { AddedToQueueSource } from '@/schemas/events';
+
 
 export default {
   components: {
     Album,
     SpTrack,
-    AlbumPlaceholder,
   },
   props: {
     results: {
@@ -84,6 +89,11 @@ export default {
       type: String,
       required: true,
     },
+  },
+  data() {
+    return {
+      AddedToQueueSource,
+    };
   },
 };
 </script>

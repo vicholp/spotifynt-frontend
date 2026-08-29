@@ -5,6 +5,9 @@
       mode == 'high' ? 'translate-y-0  dark:bg-[#101010] ' : 'translate-y-[calc(100dvh-5rem)] dark:bg-[#1C1C1C]'
     ]"
   >
+    <div class="h-0.5 w-1/2 bg-white/50">
+
+    </div>
     <nav
       :class="`items-center justify-center px-3 container flex mx-auto dark:bg-[#101010] ${mode == 'high' ? 'opacity-100 h-20 xl:sticky xl:top-0' : 'h-0 opacity-0'} transition-all duration-300 easy-in`"
       @transitionstart="handleTransitionStart"
@@ -206,6 +209,24 @@
           <div class="flex justify-center divide-white divide-opacity-20 py-5 gap-10">
             <button
               type="button"
+              class="flex items-center gap-1 text-sm font-bold"
+              @click="markTrack"
+            >
+              <span
+                class="iconify"
+                data-icon="mdi:bug-outline"
+              />
+              report track
+            </button>
+          </div>
+        </div>
+        <div
+          v-if="highShow"
+          class="container mx-auto flex flex-col bg-white dark:bg-[#1C1C1C] sm:rounded"
+        >
+          <div class="flex justify-center divide-white divide-opacity-20 py-5 gap-10">
+            <button
+              type="button"
               class="flex items-center text-sm font-bold"
             >
               <div
@@ -312,6 +333,17 @@
               />
               shuffle
             </button>
+            <button
+              type="button"
+              class="flex items-center gap-1 text-sm font-bold"
+              @click="playlistt()"
+            >
+              <span
+                class="iconify"
+                data-icon="ic:round-shuffle"
+              />
+              recommendations
+            </button>
           </div>
           <div class="flex flex-col divide-white divide-opacity-30">
             <div
@@ -349,6 +381,9 @@ import playerStore from '@/stores/player';
 import PlayerBus from '@/bus/player';
 import devicesStore from '@/stores/devices';
 
+import recommendationsApi from '@/api/recommendation';
+import marksApi from '@/api/mark';
+
 
 export default {
   setup(){
@@ -369,6 +404,9 @@ export default {
   computed: {
     color() {
       return '';
+    },
+    trackPlayedLevel() {
+      return this.playerStore.status.playedSeconds / this.playerStore.currentTrack.durationSeconds;
     },
     loaded() {
       return this.playerStore.playlist.tracks.length > 0;
@@ -405,6 +443,26 @@ export default {
     },
   },
   methods: {
+    playlistt() {
+      recommendationsApi.playlist(this.playerStore.playlist.tracks.map(t => t.id)).then((response) => {
+
+        console.log(response);
+        response.data.recommendations.recommendations.forEach(trackId => {
+          this.playerStore.playlistAddTrackById(trackId);
+        })
+      });
+    },
+    markTrack() {
+      const track = this.playerStore.currentTrack;
+
+      marksApi.store({
+        resourceId: track.id,
+        resourceType: 'recording',
+        comment: 'metadata_mismatch',
+      }).then((response) => {
+        console.log(response);
+      });
+    },
     playInThisDevice() {
       this.playerStore.playInThisDevice();
     },
@@ -416,7 +474,7 @@ export default {
     },
     cloudMode() {
       this.playerStore.cloudMode();
-     },
+    },
     handleTransitionStart(event) {
       if (event.propertyName != 'opacity') {
         return;

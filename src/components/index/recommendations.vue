@@ -9,6 +9,7 @@
           v-for="album in albums"
           :key="album.id"
           :album="album"
+          :source="AddedToQueueSource.enum.recommendations"
         />
       </div>
       <button
@@ -25,6 +26,9 @@
 import RecommendationApi from '../../api/recommendation';
 import Album from '../album.vue';
 
+import { AddedToQueueSource } from '@/schemas/events';
+
+
 export default {
   components: {
     Album,
@@ -34,6 +38,7 @@ export default {
       artists: [],
       albums: [],
       tracks: [],
+      AddedToQueueSource,
     };
   },
   async created() {

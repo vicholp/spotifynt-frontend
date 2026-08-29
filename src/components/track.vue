@@ -4,18 +4,24 @@
     @click="addTrack(track.id)"
   >
     <span class="col-span-5">{{ track.title }}</span>
-    <span class="col-span-5">{{ track.release.title }}</span>
+    <span class="col-span-3">{{ track.release.title }}</span>
     <div class="col-span-2 flex ml-auto" />
   </div>
 </template>
 <script>
 
 import PlayerStore from '../stores/player';
+import { RecordingAddedToQueueGroup } from '@/schemas/events';
+
 
 export default {
   props: {
     track: {
       type: Object,
+      required: true,
+    },
+    source: {
+      type: String,
       required: true,
     },
   },
@@ -25,7 +31,7 @@ export default {
   },
   methods: {
     addTrack(trackId) {
-      this.playerStore.playlistAddTrackById(trackId);
+      this.playerStore.playlistAddTrackById(trackId, this.source, RecordingAddedToQueueGroup.enum.by_track);
     },
   },
 };
